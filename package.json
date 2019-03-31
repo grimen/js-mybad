@@ -2,7 +2,19 @@
     "name": "@grimen/mybad",
     "version": "0.1.0",
     "description": "My friendly error base class - for Node/JavaScript.",
-    "keywords": [],
+    "keywords": [
+        "error",
+        "errors",
+        "baseclass",
+        "meta",
+        "debug",
+        "inspector",
+        "pretty",
+        "color",
+        "colors",
+        "detailed",
+        "stacktrace"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/grimen/js-mybad.git"
