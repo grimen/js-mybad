@@ -1,6 +1,6 @@
 {
     "name": "@grimen/mybad",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "My friendly error base class - for Node/JavaScript.",
     "keywords": [
         "error",
