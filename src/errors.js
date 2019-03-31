@@ -201,11 +201,13 @@ class BaseError extends ExtendableError {
                 depth,
             })
 
+            // console.log('xxx', details)
+
         } else {
             details = null
         }
 
-        const hasDetails = (typeof details === 'object') && !!Object.keys(details).length
+        const hasDetails = (typeof this.details === 'object') && !!Object.keys(this.details).length
 
         message = [
             message,
