@@ -6,12 +6,25 @@
 
 const mybad = require('../src')
 
+const stripAnsi = require('strip-ansi')
+
 
 // =========================================
 //       EXTENSIONS
 // --------------------------------------
 
 expect.extend(require('jest-tobetype'))
+
+
+// =========================================
+//       ENVIRONMENT
+// --------------------------------------
+
+process.COLORS = false
+process.ERROR_COLORS = false
+
+process.VERBOSE = false
+process.ERROR_VERBOSE = false
 
 
 // =========================================
@@ -52,12 +65,16 @@ describe('mybad', () => {
 
             expect(error.id).toBe(undefined)
 
-            error = new mybad.Error({id: 123})
+            error = new mybad.Error({
+                id: 123,
+            })
 
             expect(error.id).toBeType('number')
             expect(error.id).toEqual(123)
 
-            error = new mybad.Error({id: '123'})
+            error = new mybad.Error({
+                id: '123',
+            })
 
             expect(error.id).toBeType('string')
             expect(error.id).toEqual('123')
@@ -70,12 +87,16 @@ describe('mybad', () => {
 
             expect(error.key).toBe(undefined)
 
-            error = new mybad.Error({key: 123})
+            error = new mybad.Error({
+                key: 123,
+            })
 
             expect(error.key).toBeType('number')
             expect(error.key).toEqual(123)
 
-            error = new mybad.Error({key: '123'})
+            error = new mybad.Error({
+                key: '123',
+            })
 
             expect(error.key).toBeType('string')
             expect(error.key).toEqual('123')
@@ -88,12 +109,16 @@ describe('mybad', () => {
 
             expect(error.code).toBe(undefined)
 
-            error = new mybad.Error({code: 123})
+            error = new mybad.Error({
+                code: 123,
+            })
 
             expect(error.code).toBeType('number')
             expect(error.code).toEqual(123)
 
-            error = new mybad.Error({code: '123'})
+            error = new mybad.Error({
+                code: '123',
+            })
 
             expect(error.code).toBeType('string')
             expect(error.code).toEqual('123')
@@ -107,12 +132,16 @@ describe('mybad', () => {
             expect(error.message).toBeType('string')
             expect(error.message).toEqual('Unknown')
 
-            error = new mybad.Error({message: 123})
+            error = new mybad.Error({
+                message: 123,
+            })
 
             expect(error.message).toBeType('string')
             expect(error.message).toEqual('123')
 
-            error = new mybad.Error({message: '123'})
+            error = new mybad.Error({
+                message: '123',
+            })
 
             expect(error.message).toBeType('string')
             expect(error.message).toEqual('123')
@@ -127,18 +156,24 @@ describe('mybad', () => {
             expect(error.details).toEqual({})
 
             expect(() => {
-                error = new mybad.Error({details: 123})
+                error = new mybad.Error({
+                    details: 123,
+                })
             }).toThrow(TypeError)
 
-            error = new mybad.Error({details: {}})
+            error = new mybad.Error({
+                details: {},
+            })
 
             expect(error.details).toBeType('object')
             expect(error.details).toEqual({})
 
-            error = new mybad.Error({details: {
-                foo: 'bar',
-                baz: [1, 2, 3],
-            }})
+            error = new mybad.Error({
+                details: {
+                    foo: 'bar',
+                    baz: [1, 2, 3],
+                },
+            })
 
             expect(error.details).toBeType('object')
             expect(error.details).toEqual({
@@ -196,18 +231,20 @@ describe('mybad', () => {
 
             expect('toString' in error).toBe(true)
 
-            expect(error.toString()).toBeType('string')
-            expect(error.toString()).toEqual('Unknown')
+            expect(stripAnsi(error.toString())).toBeType('string')
+            expect(stripAnsi(error.toString())).toEqual('Unknown')
 
             error = new mybad.Error(new TypeError('Boo'))
 
-            expect(error.toString()).toBeType('string')
-            expect(error.toString()).toEqual('Boo')
+            expect(stripAnsi(error.toString())).toBeType('string')
+            expect(stripAnsi(error.toString())).toEqual('Boo')
 
-            error = new mybad.Error(new TypeError('Boo'), {message: 'Boo-hoo'})
+            error = new mybad.Error(new TypeError('Boo'), {
+                message: 'Boo-hoo',
+            })
 
-            expect(error.toString()).toBeType('string')
-            expect(error.toString()).toEqual('Boo-hoo')
+            expect(stripAnsi(error.toString())).toBeType('string')
+            expect(stripAnsi(error.toString())).toEqual('Boo-hoo')
         })
 
 

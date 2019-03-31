@@ -205,9 +205,11 @@ class BaseError extends ExtendableError {
             details = null
         }
 
+        const hasDetails = (typeof details === 'object') && !!Object.keys(details).length
+
         message = [
             message,
-            details
+            hasDetails && details,
         ].filter(Boolean).join(' - ')
 
         return message
@@ -220,7 +222,7 @@ class BaseError extends ExtendableError {
         colors = process.env['ERROR_COLORS']
         colors = colors || process.env['COLORS']
 
-        if (!colors) {
+        if (typeof colors === 'undefined') {
             colors = DEFAULT_ERROR_COLORS
         }
 
@@ -229,7 +231,7 @@ class BaseError extends ExtendableError {
         verbose = process.env['ERROR_VERBOSE']
         verbose = verbose || process.env['VERBOSE']
 
-        if (!verbose) {
+        if (typeof verbose === 'undefined') {
             verbose = DEFAULT_ERROR_VERBOSE
         }
 
