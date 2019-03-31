@@ -1,7 +1,7 @@
 
 # `js-mybad` [![NPM version](https://badge.fury.io/js/%40grimen%2Fmybad.svg)](https://badge.fury.io/js/%40grimen%2Fmybad) [![Build Status](https://travis-ci.com/grimen/js-mybad.svg?token=sspjPRWbecBSpceU8Jyn&branch=master)](https://travis-ci.com/grimen/js-mybad) [![Coverage Status](https://codecov.io/gh/grimen/js-mybad/branch/master/graph/badge.svg)](https://codecov.io/gh/grimen/js-mybad)
 
-*A runtime step profiler - for Node/JavaScript.*
+*My friendly error base class - for Node/JavaScript.*
 
 
 ## Introduction
