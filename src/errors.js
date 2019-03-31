@@ -11,7 +11,7 @@ let inspect
 try {
     inspect = require('util').inspect
 
-} catch {
+} catch (error) {
     inspect = require('util-inspect')
 }
 
