@@ -1,0 +1,42 @@
+{
+    "name": "@grimen/mybad",
+    "version": "0.1.0",
+    "description": "My friendly error base class - for Node/JavaScript.",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grimen/js-mybad.git"
+    },
+    "bugs": {
+        "url": "https://github.com/grimen/js-mybad/issues"
+    },
+    "homepage": "https://github.com/grimen/js-mybad#readme",
+    "author": "Jonas Grimfelt <jonas@markable.ai> (https://github.com/grimen)",
+    "license": "MIT",
+    "main": "index.js",
+    "scripts": {
+        "test": "npx jest",
+        "test-ci": "npx jest --runInBand --forceExit --detectOpenHandles --coverage",
+        "test-dev": "npx jest --watch",
+        "validate": "npx eslint \"**/*.js\"",
+        "release": "./bin/release",
+        "coverage": "npx codecov"
+    },
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "es6-error": "^4.1.1",
+        "util-inspect": "^0.1.8"
+    },
+    "devDependencies": {
+        "babel-eslint": "^10.0.1",
+        "eslint": "^5.14.1",
+        "jest": "^24.1.0",
+        "jest-tobetype": "^1.2.2"
+    },
+    "jest": {
+        "bail": true,
+        "verbose": true,
+        "testRegex": "test_.*\\.js",
+        "testEnvironment": "node"
+    }
+}
