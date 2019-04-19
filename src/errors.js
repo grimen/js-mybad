@@ -140,32 +140,113 @@ class BaseError extends ExtendableError {
         this._details = value
     }
 
+    get stack () {
+        return super.stack || ''
+    }
+
     get stacktrace () {
         return this.stack
     }
 
-    get stackArray () {
-        let _stackArray = this.stack
+    get stackframes () {
+        let _stackframes
 
-        if (_stackArray) {
-            _stackArray = _stackArray
+        if (this.stack) {
+            _stackframes = this.stack
                 .split(/\n/)
+                .slice(1)
                 .filter((value) => {
                     return value && !!value.trim().length
                 })
                 .map((value) => {
-                    return value.trim()
+                    try {
+                        const stackframeLine = value.trim()
+
+                        let stackframeData
+
+                        if (stackframeLine.includes('(')) {
+                            stackframeData = stackframeLine.match(/^at ([^\()]+)\((.+)(?:\:(\d+)\:(\d+)\))/i)
+
+                        } else {
+                            stackframeData = stackframeLine.match(/^at (.+)(?:\:(\d+)\:(\d+))/i)
+                        }
+
+                        let [
+                            _,
+                            functionName,
+                            fileName,
+                            lineNumber,
+                            columnNumber,
+                        ] = stackframeData || []
+
+                        functionName = functionName && functionName.trim()
+                        lineNumber = lineNumber && parseInt(lineNumber)
+                        columnNumber = columnNumber && parseInt(columnNumber)
+
+                        return {
+                            functionName,
+                            fileName,
+                            lineNumber,
+                            columnNumber,
+                        }
+
+                    } catch (error) {
+                        return error
+                    }
                 })
 
         } else {
-            _stackArray = null
+            _stackframes = null
         }
 
-        return _stackArray
+        return _stackframes
     }
 
-    get stacktraceArray () {
-        return this.stackArray
+    get stackobjects () {
+        const _stackobjects = this.stackframes.map((stackframe) => {
+            const file = stackframe.fileName
+            const function_ = stackframe.functionName
+            const line = stackframe.lineNumber
+            const column = stackframe.columnNumber
+            const source = stackframe.source
+
+            const _stackobject = {
+                file,
+                function: function_,
+                line,
+                column,
+                source,
+            }
+
+            return _stackobject
+        })
+
+        return _stackobjects
+    }
+
+    get data () {
+        return {
+            'type': this.constructor.name,
+            'id': this.id,
+            'source': this.source,
+            'code': this.code,
+            'key': this.key,
+            'message': this.message,
+            'details': this.details,
+            'stack': this.stackobjects,
+        }
+    }
+
+    json (options = {}) {
+        let {
+            indent,
+        } = options || {}
+
+        if (!indent && indent !== false) {
+            indent = DEFAULT_ERROR_INDENT
+        }
+
+        return JSON.stringify(this.data, null, indent)
     }
 
     inspect (options = {}) {
@@ -200,8 +281,6 @@ class BaseError extends ExtendableError {
                 indent,
                 depth,
             })
-
-            // console.log('xxx', details)
 
         } else {
             details = null
@@ -252,7 +331,11 @@ class BaseError extends ExtendableError {
             return error
 
         } else {
-            return new BaseError(error)
+            const castedError = new BaseError(error)
+
+            castedError.stack = error.stack
+
+            return castedError
         }
     }
 
@@ -266,7 +349,7 @@ class BaseError extends ExtendableError {
             'key': extendedError.key,
             'message': extendedError.message,
             'details': extendedError.details,
-            'stack': extendedError.stackArray,
+            'stack': extendedError.stackobjects,
             ...attrs,
         }
     }

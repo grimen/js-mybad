@@ -56,8 +56,37 @@ for (let dollar of range(42)) {
         printMoney(amount)
 
     } catch (error) {
-        console.error(error.toString())
+        console.log()
+        console.log('===============================')
+        console.log('     error.toString()')
+        console.log('---------------------------')
+        console.log()
+        console.log(error.toString())
+        console.log()
 
-        throw error
+        console.log()
+        console.log('===============================')
+        console.log('     error.stack')
+        console.log('---------------------------')
+        console.log()
+        console.log(error.stack)
+        console.log()
+
+        console.log()
+        console.log('===============================')
+        console.log('     error.inspect()')
+        console.log('---------------------------')
+        console.log()
+        console.log(error.inspect(colors = true, verbose = true))
+
+        console.log()
+        console.log('===============================')
+        console.log('     error.json()')
+        console.log('---------------------------')
+        console.log()
+        console.log(error.json())
+        console.log()
+
+        break
     }
 }

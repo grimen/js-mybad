@@ -4,6 +4,8 @@
 //       IMPORTS
 // --------------------------------------
 
+const path = require('path')
+
 const mybad = require('../src')
 
 const stripAnsi = require('strip-ansi')
@@ -25,6 +27,13 @@ process.ERROR_COLORS = false
 
 process.VERBOSE = false
 process.ERROR_VERBOSE = false
+
+
+// =========================================
+//       CONSTANTS
+// --------------------------------------
+
+const ROOT_PATH = path.resolve(path.join(__dirname, '..'))
 
 
 // =========================================
@@ -198,22 +207,100 @@ describe('mybad', () => {
             expect(error.stacktrace).toBeType('string')
         })
 
-        test('#stackArray', async () => {
+        test('#stackframes', async () => {
             let error = new mybad.Error()
 
-            expect('stackArray' in error).toBe(true)
+            expect('stackframes' in error).toBe(true)
 
-            expect(error.stackArray).toBeInstanceOf(Array)
-            expect(error.stackArray.length).toBeGreaterThan(0)
+            expect(error.stackframes).toBeType('array')
+            expect(error.stackframes.length).toBeGreaterThan(0)
         })
 
-        test('#stacktraceArray', async () => {
+        test('#stackobjects', async () => {
             let error = new mybad.Error()
 
-            expect('stackArray' in error).toBe(true)
+            expect('stackobjects' in error).toBe(true)
 
-            expect(error.stacktraceArray).toBeInstanceOf(Array)
-            expect(error.stacktraceArray.length).toBeGreaterThan(0)
+            expect(error.stackobjects).toBeType('array')
+            expect(error.stackobjects.length).toBeGreaterThan(0)
+            expect(error.stackobjects[0]).toEqual([
+                {
+                    column: 25,
+                    file: `${ROOT_PATH}/test/test_errors.js`,
+                    function: `Object.test`,
+                    line: 220,
+                    source: undefined,
+                },
+            ][0])
+        })
+
+        test('#data', async () => {
+            let error = new mybad.Error()
+
+            expect('data' in error).toBe(true)
+
+            expect(error.data).toBeType('object')
+
+            expect('type' in error.data).toBe(true)
+            expect('id' in error.data).toBe(true)
+            expect('code' in error.data).toBe(true)
+            expect('key' in error.data).toBe(true)
+            expect('message' in error.data).toBe(true)
+            expect('details' in error.data).toBe(true)
+            expect('stack' in error.data).toBe(true)
+
+            expect(error.data.type).toEqual('BaseError')
+            expect(error.data.id).toEqual(undefined)
+            expect(error.data.code).toEqual(undefined)
+            expect(error.data.key).toEqual(undefined)
+            expect(error.data.message).toEqual('Unknown')
+            expect(error.data.details).toEqual({})
+            expect(error.data.stack[0]).toEqual([
+                {
+                    column: 25,
+                    file: `${ROOT_PATH}/test/test_errors.js`,
+                    function: `Object.test`,
+                    line: 238,
+                    source: undefined,
+                },
+            ][0])
+        })
+
+        test('#json()', async () => {
+            let error = new mybad.Error()
+
+            expect('json' in error).toBe(true)
+
+            expect(() => {
+                error.json()
+            }).toNotThrow
+
+            const json = error.json()
+
+            expect(json).toBeType('string')
+
+            const data = JSON.parse(json)
+
+            expect(data.type).toBeType('string')
+            expect(data.type).toEqual('BaseError')
+
+            expect(data.message).toBeType('string')
+            expect(data.message).toEqual('Unknown')
+
+            expect(data.details).toBeType('object')
+            expect(data.details).toEqual({})
+
+            expect(data.stack).toBeType('array')
+            expect(data.stack[0]).toBeType('object')
+            expect(data.stack[0]).toEqual([
+                {
+                    column: 25,
+                    file: `${ROOT_PATH}/test/test_errors.js`,
+                    function: `Object.test`,
+                    line: 270,
+                    source: undefined,
+                },
+            ][0])
         })
 
         test('#inspect()', async () => {
@@ -281,7 +368,15 @@ describe('mybad', () => {
             expect(errorObject.key).toEqual(undefined)
             expect(errorObject.message).toEqual('Foo')
             expect(errorObject.details).toEqual({})
-            // expect(errorObject.stack).toEqual(undefined)
+            expect(errorObject.stack[0]).toEqual([
+                {
+                    column: 50,
+                    file: `${ROOT_PATH}/test/test_errors.js`,
+                    function: `Object.test`,
+                    line: 353,
+                    source: undefined,
+                },
+            ][0])
 
             class CustomError extends mybad.Error {}
 
@@ -303,7 +398,15 @@ describe('mybad', () => {
             expect(errorObject.key).toEqual(undefined)
             expect(errorObject.message).toEqual('Bar')
             expect(errorObject.details).toEqual({})
-            // expect(errorObject.stack).toEqual(undefined)
+            expect(errorObject.stack[0]).toEqual([
+                {
+                    column: 46,
+                    file: `${ROOT_PATH}/test/test_errors.js`,
+                    function: `Object.test`,
+                    line: 383,
+                    source: undefined,
+                },
+            ][0])
 
             errorObject = mybad.Error.object(new TypeError('Baz'))
 
@@ -323,7 +426,15 @@ describe('mybad', () => {
             expect(errorObject.key).toEqual(undefined)
             expect(errorObject.message).toEqual('Baz')
             expect(errorObject.details).toEqual({})
-            // expect(errorObject.stack).toEqual(undefined)
+            expect(errorObject.stack[0]).toEqual([
+                {
+                    column: 46,
+                    file: `${ROOT_PATH}/test/test_errors.js`,
+                    function: `Object.test`,
+                    line: 411,
+                    source: undefined,
+                },
+            ][0])
         })
 
     })
