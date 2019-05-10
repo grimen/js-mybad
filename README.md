@@ -93,22 +93,113 @@ PRINT $$$$$$$$$$
 PRINT $$$$$$$$$$$
 PRINT $$$$$$$$$$$$
 PRINT $$$$$$$$$$$$$
+
+===============================
+     error.toString()
+---------------------------
+
 Out of money printing ink... - { stash: '$$$$$$$$$$$$$$' }
 
-examples/basic.js:61
-        throw error
-        ^
+
+===============================
+     error.stack
+---------------------------
+
 ToMuchError: Out of money printing ink...
-    at printMoney (examples/basic.js:29:15)
-    at Object.<anonymous> (examples/basic.js:56:9)
-    at Module._compile (internal/modules/cjs/loader.js:688:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)
-    at Module.load (internal/modules/cjs/loader.js:598:32)
-    at tryModuleLoad (internal/modules/cjs/loader.js:537:12)
-    at Function.Module._load (internal/modules/cjs/loader.js:529:3)
-    at Function.Module.runMain (internal/modules/cjs/loader.js:741:12)
-    at startup (internal/bootstrap/node.js:285:19)
-    at bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)
+    at printMoney (/Users/grimen/Dev/Private/js-mybad/examples/basic.js:29:15)
+    at Object.<anonymous> (/Users/grimen/Dev/Private/js-mybad/examples/basic.js:56:9)
+    at Module._compile (module.js:653:30)
+    at Object.Module._extensions..js (module.js:664:10)
+    at Module.load (module.js:566:32)
+    at tryModuleLoad (module.js:506:12)
+    at Function.Module._load (module.js:498:3)
+    at Function.Module.runMain (module.js:694:10)
+    at startup (bootstrap_node.js:204:16)
+    at bootstrap_node.js:625:3
+
+
+===============================
+     error.inspect()
+---------------------------
+
+Out of money printing ink...
+
+===============================
+     error.json()
+---------------------------
+
+{
+    "type": "ToMuchError",
+    "id": 1557522743469,
+    "code": 400,
+    "key": "too_much",
+    "message": "Out of money printing ink...",
+    "details": {
+        "stash": "$$$$$$$$$$$$$$"
+    },
+    "stack": [
+        {
+            "file": "/Users/grimen/Dev/Private/js-mybad/examples/basic.js",
+            "function": "printMoney",
+            "line": 29,
+            "column": 15
+        },
+        {
+            "file": "/Users/grimen/Dev/Private/js-mybad/examples/basic.js",
+            "function": "Object.<anonymous>",
+            "line": 56,
+            "column": 9
+        },
+        {
+            "file": "module.js",
+            "function": "Module._compile",
+            "line": 653,
+            "column": 30
+        },
+        {
+            "file": "module.js",
+            "function": "Object.Module._extensions..js",
+            "line": 664,
+            "column": 10
+        },
+        {
+            "file": "module.js",
+            "function": "Module.load",
+            "line": 566,
+            "column": 32
+        },
+        {
+            "file": "module.js",
+            "function": "tryModuleLoad",
+            "line": 506,
+            "column": 12
+        },
+        {
+            "file": "module.js",
+            "function": "Function.Module._load",
+            "line": 498,
+            "column": 3
+        },
+        {
+            "file": "module.js",
+            "function": "Function.Module.runMain",
+            "line": 694,
+            "column": 10
+        },
+        {
+            "file": "bootstrap_node.js",
+            "function": "startup",
+            "line": 204,
+            "column": 16
+        },
+        {
+            "file": "625",
+            "function": "bootstrap_node.js",
+            "line": 3
+        }
+    ]
+}
+
 ```
 
 
