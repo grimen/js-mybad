@@ -203,7 +203,7 @@ class BaseError extends ExtendableError {
     }
 
     get stackobjects () {
-        const _stackobjects = this.stackframes
+        const _stackobjects = (this.stackframes || [])
             .map((stackframe) => {
                 const file = stackframe.fileName
                 const function_ = stackframe.functionName
