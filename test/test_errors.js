@@ -197,6 +197,7 @@ describe('mybad', () => {
             expect('stack' in error).toBe(true)
 
             expect(error.stack).toBeType('string')
+            expect(error.stacktrace.length).toBeGreaterThan(0)
         })
 
         test('#stacktrace', async () => {
@@ -205,6 +206,7 @@ describe('mybad', () => {
             expect('stacktrace' in error).toBe(true)
 
             expect(error.stacktrace).toBeType('string')
+            expect(error.stacktrace.length).toBeGreaterThan(0)
         })
 
         test('#stackframes', async () => {
@@ -228,7 +230,7 @@ describe('mybad', () => {
                     column: 25,
                     file: `${ROOT_PATH}/test/test_errors.js`,
                     function: `Object.test`,
-                    line: 220,
+                    line: 222,
                     source: undefined,
                 },
             ][0])
@@ -260,7 +262,7 @@ describe('mybad', () => {
                     column: 25,
                     file: `${ROOT_PATH}/test/test_errors.js`,
                     function: `Object.test`,
-                    line: 238,
+                    line: 240,
                     source: undefined,
                 },
             ][0])
@@ -270,10 +272,6 @@ describe('mybad', () => {
             let error = new mybad.Error()
 
             expect('json' in error).toBe(true)
-
-            expect(() => {
-                error.json()
-            }).toNotThrow
 
             const json = error.json()
 
@@ -297,7 +295,7 @@ describe('mybad', () => {
                     column: 25,
                     file: `${ROOT_PATH}/test/test_errors.js`,
                     function: `Object.test`,
-                    line: 270,
+                    line: 272,
                     source: undefined,
                 },
             ][0])
@@ -373,7 +371,7 @@ describe('mybad', () => {
                     column: 50,
                     file: `${ROOT_PATH}/test/test_errors.js`,
                     function: `Object.test`,
-                    line: 353,
+                    line: 351,
                     source: undefined,
                 },
             ][0])
@@ -403,7 +401,7 @@ describe('mybad', () => {
                     column: 46,
                     file: `${ROOT_PATH}/test/test_errors.js`,
                     function: `Object.test`,
-                    line: 383,
+                    line: 381,
                     source: undefined,
                 },
             ][0])
@@ -431,7 +429,7 @@ describe('mybad', () => {
                     column: 46,
                     file: `${ROOT_PATH}/test/test_errors.js`,
                     function: `Object.test`,
-                    line: 411,
+                    line: 409,
                     source: undefined,
                 },
             ][0])

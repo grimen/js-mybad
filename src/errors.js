@@ -203,23 +203,34 @@ class BaseError extends ExtendableError {
     }
 
     get stackobjects () {
-        const _stackobjects = this.stackframes.map((stackframe) => {
-            const file = stackframe.fileName
-            const function_ = stackframe.functionName
-            const line = stackframe.lineNumber
-            const column = stackframe.columnNumber
-            const source = stackframe.source
+        const _stackobjects = this.stackframes
+            .map((stackframe) => {
+                const file = stackframe.fileName
+                const function_ = stackframe.functionName
+                const line = stackframe.lineNumber
+                const column = stackframe.columnNumber
+                const source = stackframe.source
 
-            const _stackobject = {
-                file,
-                function: function_,
-                line,
-                column,
-                source,
-            }
+                const stackobject = {
+                    file,
+                    function: function_,
+                    line,
+                    column,
+                    source,
+                }
 
-            return _stackobject
-        })
+                return stackobject
+            })
+            .filter((stackobject) => {
+                return !!stackobject.file
+            })
+            .filter((stackobject) => {
+                const isInternalStackFile = stackobject.file.includes(__filename)
+                const isInternalStackFunction = Object.getOwnPropertyNames(this).includes(stackobject.function)
+                const isInternalStackObject = isInternalStackFile && isInternalStackFunction
+
+                return !isInternalStackObject
+            })
 
         return _stackobjects
     }
@@ -228,7 +239,6 @@ class BaseError extends ExtendableError {
         return {
             'type': this.constructor.name,
             'id': this.id,
-            'source': this.source,
             'code': this.code,
             'key': this.key,
             'message': this.message,
