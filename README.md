@@ -218,6 +218,11 @@ $ make test
 ```
 
 
+## Related
+
+- [**`python-mybad`**](https://github.com/grimen/python-mybase) - *"My friendly error base class - for Python"*
+
+
 ## About
 
 This project was mainly initiated - in lack of solid existing alternatives - to be used at our work at **[Markable.ai](https://markable.ai)** to have common code conventions between various programming environments where **Node.js** (for I/O heavy operations) is heavily used.
