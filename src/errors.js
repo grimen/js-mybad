@@ -43,10 +43,6 @@ class BaseError extends ExtendableError {
             ].some(Boolean)
         })
 
-        // error = error || args.find((arg) => {
-        //     return (typeof arg === 'string')
-        // })
-
         if (error) {
             if (!(error instanceof Error)) {
                 error = new Error(`${error}`)
@@ -65,7 +61,14 @@ class BaseError extends ExtendableError {
             details,
         } = options || {}
 
-        if (!error) {
+        if (error) {
+            id = id || error.id
+            key = key || error.key
+            code = code || error.code
+            message = message || error.message
+            details = details || error.details
+
+        } else {
             error = options.error
         }
 

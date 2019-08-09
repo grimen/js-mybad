@@ -23,11 +23,11 @@ expect.extend(require('jest-tobetype'))
 //       ENVIRONMENT
 // --------------------------------------
 
-process.COLORS = false
-process.ERROR_COLORS = false
+process.env.COLORS = false
+process.env.ERROR_COLORS = false
 
-process.VERBOSE = false
-process.ERROR_VERBOSE = false
+process.env.VERBOSE = false
+process.env.ERROR_VERBOSE = false
 
 
 // =========================================
@@ -60,12 +60,17 @@ describe('mybad', () => {
 
             expect('error' in error).toBe(true)
 
-            const someRaisedError = new TypeError('No good')
+            let someRaisedError = new TypeError('No good')
 
             error = new mybad.Error(someRaisedError)
 
             expect(error.error).toBeInstanceOf(TypeError)
             expect(error.error.toString()).toEqual('TypeError: No good')
+
+            error = new mybad.Error(error)
+
+            expect(error.error).toBeInstanceOf(mybad.Error)
+            expect(error.error.toString()).toEqual('No good')
         })
 
         test('#id', async () => {
@@ -85,6 +90,11 @@ describe('mybad', () => {
             error = new mybad.Error({
                 id: '123',
             })
+
+            expect(error.id).toBeType('string')
+            expect(error.id).toEqual('123')
+
+            error = new mybad.Error(error)
 
             expect(error.id).toBeType('string')
             expect(error.id).toEqual('123')
@@ -110,6 +120,11 @@ describe('mybad', () => {
 
             expect(error.key).toBeType('string')
             expect(error.key).toEqual('123')
+
+            error = new mybad.Error(error)
+
+            expect(error.key).toBeType('string')
+            expect(error.key).toEqual('123')
         })
 
         test('#code', async () => {
@@ -129,6 +144,11 @@ describe('mybad', () => {
             error = new mybad.Error({
                 code: '123',
             })
+
+            expect(error.code).toBeType('string')
+            expect(error.code).toEqual('123')
+
+            error = new mybad.Error(error)
 
             expect(error.code).toBeType('string')
             expect(error.code).toEqual('123')
@@ -152,6 +172,11 @@ describe('mybad', () => {
             error = new mybad.Error({
                 message: '123',
             })
+
+            expect(error.message).toBeType('string')
+            expect(error.message).toEqual('123')
+
+            error = new mybad.Error(error)
 
             expect(error.message).toBeType('string')
             expect(error.message).toEqual('123')
@@ -190,12 +215,25 @@ describe('mybad', () => {
                 foo: 'bar',
                 baz: [1, 2, 3],
             })
+
+            error = new mybad.Error(error)
+
+            expect(error.details).toBeType('object')
+            expect(error.details).toEqual({
+                foo: 'bar',
+                baz: [1, 2, 3],
+            })
         })
 
         test('#stack', async () => {
             let error = new mybad.Error()
 
             expect('stack' in error).toBe(true)
+
+            expect(error.stack).toBeType('string')
+            expect(error.stacktrace.length).toBeGreaterThan(0)
+
+            error = new mybad.Error(error)
 
             expect(error.stack).toBeType('string')
             expect(error.stacktrace.length).toBeGreaterThan(0)
@@ -208,12 +246,22 @@ describe('mybad', () => {
 
             expect(error.stacktrace).toBeType('string')
             expect(error.stacktrace.length).toBeGreaterThan(0)
+
+            error = new mybad.Error(error)
+
+            expect(error.stacktrace).toBeType('string')
+            expect(error.stacktrace.length).toBeGreaterThan(0)
         })
 
         test('#stackframes', async () => {
             let error = new mybad.Error()
 
             expect('stackframes' in error).toBe(true)
+
+            expect(error.stackframes).toBeType('array')
+            expect(error.stackframes.length).toBeGreaterThan(0)
+
+            error = new mybad.Error(error)
 
             expect(error.stackframes).toBeType('array')
             expect(error.stackframes.length).toBeGreaterThan(0)
@@ -230,7 +278,18 @@ describe('mybad', () => {
             expect(error.stackobjects[0].column).toEqual(expect.any(Number))
             expect(error.stackobjects[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
             expect(error.stackobjects[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
-            expect(error.stackobjects[0].line).toEqual(223)
+            expect(error.stackobjects[0].line).toEqual(271)
+            expect(error.stackobjects[0].source).toEqual(undefined)
+
+            error = new mybad.Error(error)
+
+            expect(error.stackobjects).toBeType('array')
+            expect(error.stackobjects.length).toBeGreaterThan(0)
+            expect(error.stackobjects[0]).toBeType('object')
+            expect(error.stackobjects[0].column).toEqual(expect.any(Number))
+            expect(error.stackobjects[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
+            expect(error.stackobjects[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
+            expect(error.stackobjects[0].line).toEqual(284)
             expect(error.stackobjects[0].source).toEqual(undefined)
         })
 
@@ -261,7 +320,24 @@ describe('mybad', () => {
             expect(error.data.stack[0].column).toEqual(expect.any(Number))
             expect(error.data.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
             expect(error.data.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
-            expect(error.data.stack[0].line).toEqual(238)
+            expect(error.data.stack[0].line).toEqual(297)
+            expect(error.data.stack[0].source).toEqual(undefined)
+
+            error = new mybad.Error(error)
+
+            expect(error.data.type).toEqual('BaseError')
+            expect(error.data.id).toEqual(undefined)
+            expect(error.data.code).toEqual(undefined)
+            expect(error.data.key).toEqual(undefined)
+            expect(error.data.message).toEqual('Unknown')
+            expect(error.data.details).toEqual({})
+
+            expect(error.data.stack.length).toBeGreaterThan(0)
+            expect(error.data.stack[0]).toBeType('object')
+            expect(error.data.stack[0].column).toEqual(expect.any(Number))
+            expect(error.data.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
+            expect(error.data.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
+            expect(error.data.stack[0].line).toEqual(326)
             expect(error.data.stack[0].source).toEqual(undefined)
         })
 
@@ -270,11 +346,11 @@ describe('mybad', () => {
 
             expect('json' in error).toBe(true)
 
-            const json = error.json()
+            let json = error.json()
 
             expect(json).toBeType('string')
 
-            const data = JSON.parse(json)
+            let data = JSON.parse(json)
 
             expect(data.type).toBeType('string')
             expect(data.type).toEqual('BaseError')
@@ -291,7 +367,31 @@ describe('mybad', () => {
             expect(data.stack[0].column).toEqual(expect.any(Number))
             expect(data.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
             expect(data.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
-            expect(data.stack[0].line).toEqual(269)
+            expect(data.stack[0].line).toEqual(345)
+            expect(data.stack[0].source).toEqual(undefined)
+
+            error = new mybad.Error(error)
+
+            json = error.json()
+
+            data = JSON.parse(json)
+
+            expect(data.type).toBeType('string')
+            expect(data.type).toEqual('BaseError')
+
+            expect(data.message).toBeType('string')
+            expect(data.message).toEqual('Unknown')
+
+            expect(data.details).toBeType('object')
+            expect(data.details).toEqual({})
+
+            expect(data.stack).toBeType('array')
+            expect(data.stack.length).toBeGreaterThan(0)
+            expect(data.stack[0]).toBeType('object')
+            expect(data.stack[0].column).toEqual(expect.any(Number))
+            expect(data.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
+            expect(data.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
+            expect(data.stack[0].line).toEqual(373)
             expect(data.stack[0].source).toEqual(undefined)
         })
 
@@ -299,6 +399,12 @@ describe('mybad', () => {
             let error = new mybad.Error()
 
             expect('inspect' in error).toBe(true)
+
+            expect(() => {
+                error.inspect()
+            }).toNotThrow
+
+            error = new mybad.Error(error)
 
             expect(() => {
                 error.inspect()
@@ -319,6 +425,18 @@ describe('mybad', () => {
             expect(stripAnsi(error.toString())).toEqual('Boo')
 
             error = new mybad.Error(new TypeError('Boo'), {
+                message: 'Boo-hoo',
+            })
+
+            expect(stripAnsi(error.toString())).toBeType('string')
+            expect(stripAnsi(error.toString())).toEqual('Boo-hoo')
+
+            error = new mybad.Error(error)
+
+            expect(stripAnsi(error.toString())).toBeType('string')
+            expect(stripAnsi(error.toString())).toEqual('Boo-hoo')
+
+            error = new mybad.Error(error, {
                 message: 'Boo-hoo',
             })
 
@@ -366,7 +484,7 @@ describe('mybad', () => {
             expect(errorObject.stack[0].column).toEqual(expect.any(Number))
             expect(errorObject.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
             expect(errorObject.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
-            expect(errorObject.stack[0].line).toEqual(344)
+            expect(errorObject.stack[0].line).toEqual(462)
             expect(errorObject.stack[0].source).toEqual(undefined)
 
             class CustomError extends mybad.Error {}
@@ -396,7 +514,7 @@ describe('mybad', () => {
             expect(errorObject.stack[0].column).toEqual(expect.any(Number))
             expect(errorObject.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
             expect(errorObject.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
-            expect(errorObject.stack[0].line).toEqual(374)
+            expect(errorObject.stack[0].line).toEqual(492)
             expect(errorObject.stack[0].source).toEqual(undefined)
 
             errorObject = mybad.Error.object(new TypeError('Baz'))
@@ -424,7 +542,7 @@ describe('mybad', () => {
             expect(errorObject.stack[0].column).toEqual(expect.any(Number))
             expect(errorObject.stack[0].file).toEqual(`${ROOT_PATH}/test/test_errors.js`)
             expect(errorObject.stack[0].function).toEqual(expect.stringMatching(/^Object\.(?:test|<anonymous>|mybad\.Error)$/))
-            expect(errorObject.stack[0].line).toEqual(402)
+            expect(errorObject.stack[0].line).toEqual(520)
             expect(errorObject.stack[0].source).toEqual(undefined)
         })
 
