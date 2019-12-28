@@ -9,7 +9,7 @@
 One in general always needs a application/library specific error base class, but the native errors are very limited in what meta/debugging information they can hold at time they are raised. For better debugging and error reporting/inspection this error base class allows to attach some additonal error context information that can be used to better understand the issue - without having to create custom error formatters, or run debugger.
 
 
-# Install
+## Install
 
 Install using **npm**:
 
@@ -24,7 +24,7 @@ $ yarn add @grimen/mybad
 ```
 
 
-# Use
+## Use
 
 Very basic **[example](https://github.com/grimen/js-mybad/tree/master/examples/basic.js)**:
 
@@ -203,7 +203,7 @@ Out of money printing ink...
 ```
 
 
-# Test
+## Test
 
 Clone down source code:
 
@@ -220,7 +220,7 @@ $ make test
 
 ## Related
 
-- [**`python-mybad`**](https://github.com/grimen/python-mybase) - *"My friendly error base class - for Python"*
+- [**`python-mybase`**](https://github.com/grimen/python-mybase) - *"My friendly error base class - for Python"*
 
 
 ## About
