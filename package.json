@@ -34,6 +34,9 @@
         "release": "./bin/release",
         "coverage": "npx codecov"
     },
+    "engines": {
+        "node": ">=10"
+    },
     "dependencies": {
         "chalk": "^4.1.0",
         "es6-error": "^4.1.1",
