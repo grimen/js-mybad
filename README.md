@@ -220,7 +220,7 @@ $ make test
 
 ## Related
 
-- [**`python-mybase`**](https://github.com/grimen/python-mybase) - *"My friendly error base class - for Python"*
+- [**`python-mybad`**](https://github.com/grimen/python-mybad) - *"My friendly error base class - for Python"*
 
 
 ## About
