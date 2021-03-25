@@ -34,6 +34,13 @@ const TRUTHY_PATTERN = /^true|1$/i
 
 class BaseError extends ExtendableError {
 
+    #error = undefined
+    #id = undefined
+    #key = undefined
+    #code = undefined
+    #message = undefined
+    #details = undefined
+
     constructor (...args) {
         let error = args.find((arg) => {
             return [
@@ -86,61 +93,72 @@ class BaseError extends ExtendableError {
             throw TypeError(`Expected argument ${klass}(details = <details>) to be a \`${typeof {}}\`, but was \`${typeof details}\`.`)
         }
 
-        this._error = error
-        this._id = id
-        this._key = key
-        this._code = code
-        this._message = message
-        this._details = details
-        this._error = error
+        this.#error = error
+        this.#id = id
+        this.#key = key
+        this.#code = code
+        this.#message = message
+        this.#details = details
     }
 
     get error () {
         return this._error
+        return this.#error
     }
 
     set error (value) {
         this._error = value
+        this.#error = value
     }
 
     get id () {
         return this._id
+        return this.#id
     }
 
     set id (value) {
         this._id = value
+        this.#id = value
     }
 
     get key () {
         return this._key
+        return this.#key
     }
 
     set key (value) {
         this._key = value
+        this.#key = value
     }
 
     get code () {
         return this._code
+        return this.#code
     }
 
     set code (value) {
         this._code = value
+        this.#code = value
     }
 
     get message () {
         return this._message
+        return this.#message
     }
 
     set message (value) {
         this._message = value
+        this.#message = value
     }
 
     get details () {
         return this._details || {}
+        return this.#details || {}
     }
 
     set details (value) {
         this._details = value
+        this.#details = value
     }
 
     get stack () {
@@ -363,6 +381,13 @@ class BaseError extends ExtendableError {
             'message': extendedError.message,
             'details': extendedError.details,
             'stack': extendedError.stackobjects,
+            type: error.constructor.name,
+            id: extendedError.id,
+            code: extendedError.code,
+            key: extendedError.key,
+            message: extendedError.message,
+            details: extendedError.details,
+            stack: extendedError.stackobjects,
             ...attrs,
         }
     }
