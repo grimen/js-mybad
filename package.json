@@ -44,7 +44,7 @@
     },
     "devDependencies": {
         "babel-eslint": "^10.1.0",
-        "eslint": "^7.19.0",
+        "eslint": "^7.22.0",
         "jest": "^26.6.3",
         "jest-tobetype": "^1.2.3",
         "strip-ansi": "^6.0.0"
