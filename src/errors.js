@@ -21,7 +21,6 @@ try {
 -------------------------------------- */
 
 const DEFAULT_ERROR_INDENT = 4
-const DEFAULT_ERROR_DEPTH = null
 const DEFAULT_ERROR_COLORS = true
 const DEFAULT_ERROR_VERBOSE = true
 
@@ -53,6 +52,11 @@ class BaseError extends ExtendableError {
         if (error) {
             if (!(error instanceof Error)) {
                 error = new Error(`${error}`)
+
+                error.stack = error.stack.split('\n')
+                    .filter(stackLine => !/new [A-Za-z_]+Error/gmi.test(stackLine))
+                    .filter(stackLine => !stackLine.includes('js-mybad/src'))
+                    .join('\n')
             }
 
             args = args.slice(1)
@@ -93,6 +97,10 @@ class BaseError extends ExtendableError {
             throw TypeError(`Expected argument ${klass}(details = <details>) to be a \`${typeof {}}\`, but was \`${typeof details}\`.`)
         }
 
+        if (error) {
+            this.stack = error?.stack || this.stack
+        }
+
         this.#error = error
         this.#id = id
         this.#key = key
@@ -102,62 +110,50 @@ class BaseError extends ExtendableError {
     }
 
     get error () {
-        return this._error
         return this.#error
     }
 
     set error (value) {
-        this._error = value
         this.#error = value
     }
 
     get id () {
-        return this._id
         return this.#id
     }
 
     set id (value) {
-        this._id = value
         this.#id = value
     }
 
     get key () {
-        return this._key
         return this.#key
     }
 
     set key (value) {
-        this._key = value
         this.#key = value
     }
 
     get code () {
-        return this._code
         return this.#code
     }
 
     set code (value) {
-        this._code = value
         this.#code = value
     }
 
     get message () {
-        return this._message
         return this.#message
     }
 
     set message (value) {
-        this._message = value
         this.#message = value
     }
 
     get details () {
-        return this._details || {}
         return this.#details || {}
     }
 
     set details (value) {
-        this._details = value
         this.#details = value
     }
 
@@ -186,13 +182,14 @@ class BaseError extends ExtendableError {
                         let stackframeData
 
                         if (stackframeLine.includes('(')) {
-                            stackframeData = stackframeLine.match(/^at ([^\()]+)\((.+)(?:\:(\d+)\:(\d+)\))/i)
+                            stackframeData = stackframeLine.match(/^at ([^()]+)\((.+)(?::(\d+):(\d+)\))/i)
 
                         } else {
-                            stackframeData = stackframeLine.match(/^at (.+)(?:\:(\d+)\:(\d+))/i)
+                            stackframeData = stackframeLine.match(/^at (.+)(?::(\d+):(\d+))/i)
                         }
 
                         let [
+                            // eslint-disable-next-line
                             _,
                             functionName,
                             fileName,
@@ -370,17 +367,14 @@ class BaseError extends ExtendableError {
         }
     }
 
+    static from (error) {
+        return this.cast(error)
+    }
+
     static object (error, attrs) {
         const extendedError = BaseError.cast(error)
 
         return {
-            'type': error.constructor.name,
-            'id': extendedError.id,
-            'code': extendedError.code,
-            'key': extendedError.key,
-            'message': extendedError.message,
-            'details': extendedError.details,
-            'stack': extendedError.stackobjects,
             type: error.constructor.name,
             id: extendedError.id,
             code: extendedError.code,
