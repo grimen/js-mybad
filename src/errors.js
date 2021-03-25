@@ -98,7 +98,7 @@ class BaseError extends ExtendableError {
         }
 
         if (error) {
-            this.stack = error?.stack || this.stack
+            this.stack = error.stack || this.stack
         }
 
         this.#error = error
