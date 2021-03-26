@@ -4,7 +4,6 @@
 -------------------------------------- */
 
 const ExtendableError = require('es6-error')
-const privateParts = require('private-parts')
 const color = require('chalk')
 
 let inspect
@@ -27,7 +26,6 @@ const DEFAULT_ERROR_VERBOSE = true
 
 const TRUTHY_PATTERN = /^true|1$/i
 
-const _ = privateParts.createKey()
 
 /* =========================================
       CLASSES
@@ -35,13 +33,12 @@ const _ = privateParts.createKey()
 
 class BaseError extends ExtendableError {
 
-    // ECMASCRIPT stage-3
-    // #error = undefined
-    // #id = undefined
-    // #key = undefined
-    // #code = undefined
-    // #message = undefined
-    // #details = undefined
+    #error = undefined
+    #id = undefined
+    #key = undefined
+    #code = undefined
+    #message = undefined
+    #details = undefined
 
     constructor (...args) {
         let error = args.find((arg) => {
@@ -104,60 +101,60 @@ class BaseError extends ExtendableError {
             this.stack = error.stack || this.stack
         }
 
-        _(this).error = error
-        _(this).id = id
-        _(this).key = key
-        _(this).code = code
-        _(this).message = message
-        _(this).details = details
+        this.#error = error
+        this.#id = id
+        this.#key = key
+        this.#code = code
+        this.#message = message
+        this.#details = details
     }
 
     get error () {
-        return _(this).error
+        return this.#error
     }
 
     set error (value) {
-        _(this).error = value
+        this.#error = value
     }
 
     get id () {
-        return _(this).id
+        return this.#id
     }
 
     set id (value) {
-        _(this).id = value
+        this.#id = value
     }
 
     get key () {
-        return _(this).key
+        return this.#key
     }
 
     set key (value) {
-        _(this).key = value
+        this.#key = value
     }
 
     get code () {
-        return _(this).code
+        return this.#code
     }
 
     set code (value) {
-        _(this).code = value
+        this.#code = value
     }
 
     get message () {
-        return _(this).message
+        return this.#message
     }
 
     set message (value) {
-        _(this).message = value
+        this.#message = value
     }
 
     get details () {
-        return _(this).details || {}
+        return this.#details || {}
     }
 
     set details (value) {
-        _(this).details = value
+        this.#details = value
     }
 
     get stack () {

@@ -40,7 +40,6 @@
     "dependencies": {
         "chalk": "^4.1.0",
         "es6-error": "^4.1.1",
-        "private-parts": "^0.4.1",
         "util-inspect": "^0.1.8"
     },
     "devDependencies": {
