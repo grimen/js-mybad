@@ -1,9 +1,13 @@
 
-all: test
+all: build
 
 .PHONY: install-ci
 install-ci:
 	yarn install
+
+.PHONY: build
+build:
+	yarn run build
 
 .PHONY: test
 test:

@@ -1,4 +1,3 @@
-
 /* =========================================
       IMPORTS
 -------------------------------------- */
@@ -10,11 +9,9 @@ let inspect
 
 try {
     inspect = require('util').inspect
-
 } catch (error) {
     inspect = require('util-inspect')
 }
-
 
 /* =========================================
       CONSTANTS
@@ -26,13 +23,11 @@ const DEFAULT_ERROR_VERBOSE = true
 
 const TRUTHY_PATTERN = /^true|1$/i
 
-
 /* =========================================
       CLASSES
 -------------------------------------- */
 
 class BaseError extends ExtendableError {
-
     #error = undefined
     #id = undefined
     #key = undefined
@@ -40,22 +35,21 @@ class BaseError extends ExtendableError {
     #message = undefined
     #details = undefined
 
-    constructor (...args) {
+    constructor(...args) {
         let error = args.find((arg) => {
-            return [
-                (arg instanceof Error),
-                (typeof arg === 'string'),
-                (typeof arg === 'number'),
-            ].some(Boolean)
+            return [arg instanceof Error, typeof arg === 'string', typeof arg === 'number'].some(
+                Boolean
+            )
         })
 
         if (error) {
             if (!(error instanceof Error)) {
                 error = new Error(`${error}`)
 
-                error.stack = error.stack.split('\n')
-                    .filter(stackLine => !/new [A-Za-z_]+Error/gmi.test(stackLine))
-                    .filter(stackLine => !stackLine.includes('js-mybad/src'))
+                error.stack = error.stack
+                    .split('\n')
+                    .filter((stackLine) => !/new [A-Za-z_]+Error/gim.test(stackLine))
+                    .filter((stackLine) => !stackLine.includes('js-mybad/src'))
                     .join('\n')
             }
 
@@ -64,13 +58,7 @@ class BaseError extends ExtendableError {
 
         const options = args[0] || {}
 
-        let {
-            id,
-            key,
-            code,
-            message,
-            details,
-        } = options || {}
+        let { id, key, code, message, details } = options || {}
 
         if (error) {
             id = id || error.id
@@ -78,7 +66,6 @@ class BaseError extends ExtendableError {
             code = code || error.code
             message = message || error.message
             details = details || error.details
-
         } else {
             error = options.error
         }
@@ -94,7 +81,9 @@ class BaseError extends ExtendableError {
         const klass = this.constructor.name
 
         if (typeof details !== 'object') {
-            throw TypeError(`Expected argument ${klass}(details = <details>) to be a \`${typeof {}}\`, but was \`${typeof details}\`.`)
+            throw TypeError(
+                `Expected argument ${klass}(details = <details>) to be a \`${typeof {}}\`, but was \`${typeof details}\`.`
+            )
         }
 
         if (error) {
@@ -109,63 +98,63 @@ class BaseError extends ExtendableError {
         this.#details = details
     }
 
-    get error () {
+    get error() {
         return this.#error
     }
 
-    set error (value) {
+    set error(value) {
         this.#error = value
     }
 
-    get id () {
+    get id() {
         return this.#id
     }
 
-    set id (value) {
+    set id(value) {
         this.#id = value
     }
 
-    get key () {
+    get key() {
         return this.#key
     }
 
-    set key (value) {
+    set key(value) {
         this.#key = value
     }
 
-    get code () {
+    get code() {
         return this.#code
     }
 
-    set code (value) {
+    set code(value) {
         this.#code = value
     }
 
-    get message () {
+    get message() {
         return this.#message
     }
 
-    set message (value) {
+    set message(value) {
         this.#message = value
     }
 
-    get details () {
+    get details() {
         return this.#details || {}
     }
 
-    set details (value) {
+    set details(value) {
         this.#details = value
     }
 
-    get stack () {
+    get stack() {
         return super.stack || ''
     }
 
-    get stacktrace () {
+    get stacktrace() {
         return this.stack
     }
 
-    get stackframes () {
+    get stackframes() {
         let _stackframes
 
         if (this.stack) {
@@ -182,8 +171,9 @@ class BaseError extends ExtendableError {
                         let stackframeData
 
                         if (stackframeLine.includes('(')) {
-                            stackframeData = stackframeLine.match(/^at ([^()]+)\((.+)(?::(\d+):(\d+)\))/i)
-
+                            stackframeData = stackframeLine.match(
+                                /^at ([^()]+)\((.+)(?::(\d+):(\d+)\))/i
+                            )
                         } else {
                             stackframeData = stackframeLine.match(/^at (.+)(?::(\d+):(\d+))/i)
                         }
@@ -207,12 +197,10 @@ class BaseError extends ExtendableError {
                             lineNumber,
                             columnNumber,
                         }
-
                     } catch (error) {
                         return error
                     }
                 })
-
         } else {
             _stackframes = null
         }
@@ -220,7 +208,7 @@ class BaseError extends ExtendableError {
         return _stackframes
     }
 
-    get stackobjects () {
+    get stackobjects() {
         const _stackobjects = (this.stackframes || [])
             .map((stackframe) => {
                 const file = stackframe.fileName
@@ -244,7 +232,9 @@ class BaseError extends ExtendableError {
             })
             .filter((stackobject) => {
                 const isInternalStackFile = stackobject.file.includes(__filename)
-                const isInternalStackFunction = Object.getOwnPropertyNames(this).includes(stackobject.function)
+                const isInternalStackFunction = Object.getOwnPropertyNames(this).includes(
+                    stackobject.function
+                )
                 const isInternalStackObject = isInternalStackFile && isInternalStackFunction
 
                 return !isInternalStackObject
@@ -253,22 +243,20 @@ class BaseError extends ExtendableError {
         return _stackobjects
     }
 
-    get data () {
+    get data() {
         return {
-            'type': this.constructor.name,
-            'id': this.id,
-            'code': this.code,
-            'key': this.key,
-            'message': this.message,
-            'details': this.details,
-            'stack': this.stackobjects,
+            type: this.constructor.name,
+            id: this.id,
+            code: this.code,
+            key: this.key,
+            message: this.message,
+            details: this.details,
+            stack: this.stackobjects,
         }
     }
 
-    json (options = {}) {
-        let {
-            indent,
-        } = options || {}
+    json(options = {}) {
+        let { indent } = options || {}
 
         if (!indent && indent !== false) {
             indent = DEFAULT_ERROR_INDENT
@@ -277,13 +265,10 @@ class BaseError extends ExtendableError {
         return JSON.stringify(this.data, null, indent)
     }
 
-    inspect (options = {}) {
+    inspect(options = {}) {
         options = options || {}
 
-        let {
-            colors,
-            verbose,
-        } = options
+        let { colors, verbose } = options
 
         let message
         let details
@@ -292,7 +277,6 @@ class BaseError extends ExtendableError {
 
         if (!this.message) {
             message = '<none>'
-
         } else {
             message = this.message.split(' - Arguments')[0]
         }
@@ -309,22 +293,18 @@ class BaseError extends ExtendableError {
                 indent,
                 depth,
             })
-
         } else {
             details = null
         }
 
-        const hasDetails = (typeof this.details === 'object') && !!Object.keys(this.details).length
+        const hasDetails = typeof this.details === 'object' && !!Object.keys(this.details).length
 
-        message = [
-            message,
-            hasDetails && details,
-        ].filter(Boolean).join(' - ')
+        message = [message, hasDetails && details].filter(Boolean).join(' - ')
 
         return message
     }
 
-    toString () {
+    toString() {
         let colors
         let verbose
 
@@ -354,10 +334,9 @@ class BaseError extends ExtendableError {
         return string
     }
 
-    static cast (error) {
+    static cast(error) {
         if (error instanceof BaseError) {
             return error
-
         } else {
             const castedError = new BaseError(error)
 
@@ -367,11 +346,11 @@ class BaseError extends ExtendableError {
         }
     }
 
-    static from (error) {
+    static from(error) {
         return this.cast(error)
     }
 
-    static object (error, attrs) {
+    static object(error, attrs) {
         const extendedError = BaseError.cast(error)
 
         return {
@@ -385,7 +364,6 @@ class BaseError extends ExtendableError {
             ...attrs,
         }
     }
-
 }
 
 /* =========================================

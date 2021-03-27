@@ -26,11 +26,13 @@
     "author": "Jonas Grimfelt <jonas@markable.ai> (https://github.com/grimen)",
     "license": "MIT",
     "main": "index.js",
+    "browser": "dist/index.umd.js",
     "scripts": {
+        "build": "npx rollup -c",
         "test": "npx jest",
         "test-ci": "npx jest --runInBand --forceExit --detectOpenHandles --coverage",
         "test-dev": "npx jest --watch",
-        "validate": "npx eslint \"**/*.js\"",
+        "validate": "npx eslint \"{src/**/*.js,test/**/*.js}\"",
         "release": "./bin/release",
         "coverage": "npx codecov"
     },
@@ -43,10 +45,27 @@
         "util-inspect": "^0.1.8"
     },
     "devDependencies": {
+        "@babel/cli": "^7.13.10",
+        "@babel/core": "^7.13.10",
+        "@babel/plugin-proposal-class-properties": "^7.13.0",
+        "@babel/polyfill": "^7.12.1",
+        "@babel/preset-env": "^7.13.12",
+        "@rollup/plugin-babel": "^5.3.0",
+        "@rollup/plugin-commonjs": "^18.0.0",
+        "@rollup/plugin-node-resolve": "^11.2.1",
         "babel-eslint": "^10.1.0",
+        "core-js": "^3.9.1",
         "eslint": "^7.22.0",
+        "eslint-config-prettier": "^8.1.0",
         "jest": "^26.6.3",
         "jest-tobetype": "^1.2.3",
+        "prettier": "^2.2.1",
+        "regenerator-runtime": "^0.13.7",
+        "rollup": "^2.42.4",
+        "rollup-plugin-cleaner": "^1.0.0",
+        "rollup-plugin-cleanup": "^3.2.1",
+        "rollup-plugin-node-builtins": "^2.1.2",
+        "rollup-plugin-node-polyfills": "^0.2.1",
         "strip-ansi": "^6.0.0"
     },
     "jest": {
@@ -54,5 +73,8 @@
         "verbose": true,
         "testRegex": "test_.*\\.js",
         "testEnvironment": "node"
-    }
+    },
+    "files": [
+        "dist"
+    ]
 }

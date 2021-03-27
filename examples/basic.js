@@ -49,6 +49,7 @@ const range = (to) => {
 
 let amount = ''
 
+// eslint-disable-next-line
 for (let dollar of range(42)) {
     amount += '$'
 
@@ -77,7 +78,7 @@ for (let dollar of range(42)) {
         console.log('     error.inspect()')
         console.log('---------------------------')
         console.log()
-        console.log(error.inspect(colors = true, verbose = true))
+        console.log(error.inspect({colors: true, verbose: true}))
 
         console.log()
         console.log('===============================')

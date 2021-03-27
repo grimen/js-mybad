@@ -1,6 +1,7 @@
 {
     "extends": [
-        "eslint:recommended"
+        "eslint:recommended",
+        "prettier"
     ],
     "parser": "babel-eslint",
     "env": {
