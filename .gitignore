@@ -2,7 +2,6 @@
 *.log
 *.pem
 node_modules
-dist
 tmp
 .vscode
 *credentials*
