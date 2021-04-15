@@ -67,7 +67,32 @@ for (let dollar of range(42)) {
         printMoney(amount)
 
     } catch (error) {
-        console.error(error.toString())
+        process.env.ERROR_VERBOSE = false
+        process.env.ERROR_COLORS = false
+
+        console.log()
+        console.log('========================================================')
+        console.log('     error.toString({verbose: false})')
+        console.log('-----------------------------------------------------')
+        console.log()
+        console.log(error.toString({verbose: false}))
+        console.log()
+
+        console.log()
+        console.log('========================================================')
+        console.log('     error.toString({verbose: true})')
+        console.log('-----------------------------------------------------')
+        console.log()
+        console.log(error.toString({verbose: true}))
+        console.log()
+
+        console.log()
+        console.log('========================================================')
+        console.log('     error.toJSON()')
+        console.log('-----------------------------------------------------')
+        console.log()
+        console.log(error.toString({verbose: true}))
+        console.log()
 
         throw error
     }
@@ -75,7 +100,7 @@ for (let dollar of range(42)) {
 
 ```
 
-Run this with optional environment variables `COLORS` / `ERROR_COLORS` and/or `VERBOSE` / `ERROR_VERBOSE` set too truthy or falsy values, so see various error info formatting in terminal.
+Run this with optional environment variables `COLORS` / `ERROR_COLORS` and/or `VERBOSE` / `ERROR_VERBOSE` set too truthy or falsy values, so see various error info formatting in terminal. Also `(NO_COLOR)[https://no-color.org]` is respected.
 
 Something like this (imagine some colorized formatting):
 
@@ -94,112 +119,91 @@ PRINT $$$$$$$$$$$
 PRINT $$$$$$$$$$$$
 PRINT $$$$$$$$$$$$$
 
-===============================
-     error.toString()
----------------------------
 
-Out of money printing ink... - { stash: '$$$$$$$$$$$$$$' }
-
-
-===============================
-     error.stack
----------------------------
-
-ToMuchError: Out of money printing ink...
-    at printMoney (/Users/grimen/Dev/Private/js-mybad/examples/basic.js:29:15)
-    at Object.<anonymous> (/Users/grimen/Dev/Private/js-mybad/examples/basic.js:56:9)
-    at Module._compile (module.js:653:30)
-    at Object.Module._extensions..js (module.js:664:10)
-    at Module.load (module.js:566:32)
-    at tryModuleLoad (module.js:506:12)
-    at Function.Module._load (module.js:498:3)
-    at Function.Module.runMain (module.js:694:10)
-    at startup (bootstrap_node.js:204:16)
-    at bootstrap_node.js:625:3
-
-
-===============================
-     error.inspect()
----------------------------
+========================================================
+     error.toString({verbose: false})
+-----------------------------------------------------
 
 Out of money printing ink...
 
-===============================
-     error.json()
----------------------------
+
+========================================================
+     error.toString({verbose: true})
+-----------------------------------------------------
+
+Out of money printing ink... { stash: '$$$$$$$$$$$$$$' }
+
+
+========================================================
+     error.toJSON()
+-----------------------------------------------------
 
 {
-    "type": "ToMuchError",
-    "id": 1557522743469,
-    "code": 400,
-    "key": "too_much",
-    "message": "Out of money printing ink...",
-    "details": {
-        "stash": "$$$$$$$$$$$$$$"
+  type: 'ToMuchError',
+  id: 1618487081556,
+  code: 400,
+  key: 'too_much',
+  message: 'Out of money printing ink...',
+  details: { stash: '$$$$$$$$$$$$$$' },
+  stack: [
+    {
+      file: '/Users/jonas/Dev/Private/js-mybad/examples/basic.js',
+      function: 'printMoney',
+      line: 23,
+      column: 19,
+      source: undefined
     },
-    "stack": [
-        {
-            "file": "/Users/grimen/Dev/Private/js-mybad/examples/basic.js",
-            "function": "printMoney",
-            "line": 29,
-            "column": 15
-        },
-        {
-            "file": "/Users/grimen/Dev/Private/js-mybad/examples/basic.js",
-            "function": "Object.<anonymous>",
-            "line": 56,
-            "column": 9
-        },
-        {
-            "file": "module.js",
-            "function": "Module._compile",
-            "line": 653,
-            "column": 30
-        },
-        {
-            "file": "module.js",
-            "function": "Object.Module._extensions..js",
-            "line": 664,
-            "column": 10
-        },
-        {
-            "file": "module.js",
-            "function": "Module.load",
-            "line": 566,
-            "column": 32
-        },
-        {
-            "file": "module.js",
-            "function": "tryModuleLoad",
-            "line": 506,
-            "column": 12
-        },
-        {
-            "file": "module.js",
-            "function": "Function.Module._load",
-            "line": 498,
-            "column": 3
-        },
-        {
-            "file": "module.js",
-            "function": "Function.Module.runMain",
-            "line": 694,
-            "column": 10
-        },
-        {
-            "file": "bootstrap_node.js",
-            "function": "startup",
-            "line": 204,
-            "column": 16
-        },
-        {
-            "file": "625",
-            "function": "bootstrap_node.js",
-            "line": 3
-        }
-    ]
+    {
+      file: '/Users/jonas/Dev/Private/js-mybad/examples/basic.js',
+      function: 'Object.<anonymous>',
+      line: 57,
+      column: 9,
+      source: undefined
+    },
+    {
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._compile',
+      line: 1063,
+      column: 30,
+      source: undefined
+    },
+    {
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Object.Module._extensions..js',
+      line: 1092,
+      column: 10,
+      source: undefined
+    },
+    {
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.load',
+      line: 928,
+      column: 32,
+      source: undefined
+    },
+    {
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Function.Module._load',
+      line: 769,
+      column: 14,
+      source: undefined
+    },
+    {
+      file: 'internal/modules/run_main.js',
+      function: 'Function.executeUserEntryPoint [as runMain]',
+      line: 72,
+      column: 12,
+      source: undefined
+    },
+    {
+      file: '17',
+      function: 'internal/main/run_main_module.js',
+      line: 47,
+      column: undefined,
+      source: undefined
+    }
+  ]
 }
-
 ```
 
 

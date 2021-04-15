@@ -24,7 +24,8 @@ const DEFAULT_ERROR_INDENT = 4
 const DEFAULT_ERROR_COLORS = true
 const DEFAULT_ERROR_VERBOSE = true
 
-const TRUTHY_PATTERN = /^true|1$/i
+const TRUTHY_PATTERN = /^yes|true|1$/i
+const FALSY_PATTERN = /^no|false|0$/i
 
 
 /* =========================================
@@ -77,7 +78,10 @@ class BaseError extends ExtendableError {
             key = key || error.key
             code = code || error.code
             message = message || error.message
+
             details = details || error.details
+
+            // TODO: pass any non-reserved option - https://github.com/ramadis/unmiss/blob/master/src/MethodMissingClass.js
 
         } else {
             error = options.error
@@ -94,7 +98,7 @@ class BaseError extends ExtendableError {
         const klass = this.constructor.name
 
         if (typeof details !== 'object') {
-            throw TypeError(`Expected argument ${klass}(details = <details>) to be a \`${typeof {}}\`, but was \`${typeof details}\`.`)
+            throw TypeError(`Expected argument \`${klass}({ details: <details> })\`\` to be a \`${typeof {}}\`, but was \`${typeof details}\`.`)
         }
 
         if (error) {
@@ -157,6 +161,14 @@ class BaseError extends ExtendableError {
         this.#details = value
     }
 
+    get cause () {
+        return super.cause || this.error
+    }
+
+    set cause (error) {
+        this.error = error
+    }
+
     get stack () {
         return super.stack || ''
     }
@@ -166,10 +178,223 @@ class BaseError extends ExtendableError {
     }
 
     get stackframes () {
+        return this.constructor.getStackFrames(this)
+    }
+
+    get stackobjects () {
+        return this.constructor.getStackObjects(this)
+    }
+
+    get data () {
+        return this.constructor.toJSON(this)
+    }
+
+    // DEPRECATE: stringify? `util-deprecate`
+    json (...args) {
+        return this.constructor.stringify(this, ...args)
+    }
+
+    inspect (...args) {
+        return this.constructor.inspect(this, ...args)
+    }
+
+    valueOf (...args) {
+        return this.constructor.valueOf(this, ...args)
+    }
+
+    toJSON (...args) {
+        return this.constructor.toJSON(this, ...args)
+    }
+
+    toString (...args) {
+        return this.constructor.toString(this, ...args)
+    }
+
+    static from (...args) {
+        return this.cast(...args)
+    }
+
+    // legacy
+    static object (...args) {
+        return this.toJSON(...args)
+    }
+
+    static data (...args) {
+        return this.toJSON(...args)
+    }
+
+    static stackframes (...args) {
+        return this.getStackFrames(...args)
+    }
+
+    static stackobjects (...args) {
+        return this.getStackObjects(...args)
+    }
+
+    static cast (error) {
+        if (error instanceof BaseError) {
+            return error
+
+        } else {
+            const castedError = new BaseError(error)
+
+            castedError.stack = error.stack
+
+            return castedError
+        }
+    }
+
+    static inspect (error, options = {}) {
+        if (typeof error === 'object') {
+            let {
+                colors,
+                verbose,
+            } = this.getOptions(options)
+
+            let message
+            let details
+
+            const indent = DEFAULT_ERROR_INDENT
+
+            if (!error.message) {
+                message = '<none>'
+
+            } else {
+                message = error.message.split(' - Arguments')[0]
+            }
+
+            if (colors) {
+                message = color.red(message)
+            }
+
+            if (verbose) {
+                const depth = null
+
+                details = inspect(error.details, {
+                    colors,
+                    indent,
+                    depth,
+                })
+
+                if (colors) {
+                    details = color.gray(details)
+                }
+
+            } else {
+                details = null
+            }
+
+            const hasDetails = (typeof error.details === 'object') && !!Object.keys(error.details).length
+
+            message = [
+                message,
+                hasDetails && details,
+            ].filter(Boolean).join(' ')
+
+            return message
+        }
+    }
+
+    static stringify (error, options = {}) {
+        if (typeof error === 'object') {
+            let {
+                indent,
+            } = options || {}
+
+            if (!indent && indent !== false) {
+                indent = DEFAULT_ERROR_INDENT
+            }
+
+            return JSON.stringify(error.data, null, indent)
+        } else if (error) {
+            if (typeof error.toString === 'function') {
+                return error.toString()
+            }
+        }
+
+        return ''
+    }
+
+    static valueOf (error) {
+        if (typeof error === 'object') {
+            return (typeof error.code === 'number') ? error.code : 0
+        } else if (error) {
+            if (typeof error.valueOf === 'function') {
+                return error.valueOf()
+            }
+        }
+
+        return undefined
+    }
+
+    static toJSON (error, attrs = {}) {
+        if (error) {
+            const extendedError = BaseError.cast(error)
+
+            return {
+                type: error.constructor.name,
+                id: extendedError.id,
+                code: extendedError.code,
+                key: extendedError.key,
+                message: extendedError.message,
+                details: extendedError.details,
+                stack: extendedError.stackobjects,
+                ...attrs,
+            }
+        } else {
+            return {}
+        }
+    }
+
+    static toString (error, options = {}) {
+        if (error) {
+            error = BaseError.cast(error)
+
+            const string = this.inspect(error, options)
+
+            return string
+        }
+    }
+
+    static getOptions (options = {}) {
+        options = {
+            ...options,
+        }
+
+        let { colors, verbose } = options
+
+        colors = (typeof colors === 'boolean') ? colors : process.env['NO_COLOR'] && FALSY_PATTERN.test(process.env['NO_COLOR']) // no-color.org
+        colors = (typeof colors === 'boolean') ? colors : process.env['ERROR_COLORS']
+        colors = (typeof colors === 'boolean') ? colors : process.env['COLORS']
+
+
+        if (typeof colors === 'undefined') {
+            colors = DEFAULT_ERROR_COLORS
+        }
+
+        colors = TRUTHY_PATTERN.test(`${colors}`)
+
+        verbose = (typeof verbose === 'boolean') ? verbose : process.env['ERROR_VERBOSE']
+        verbose = (typeof verbose === 'boolean') ? verbose : process.env['VERBOSE']
+
+        if (typeof verbose === 'undefined') {
+            verbose = DEFAULT_ERROR_VERBOSE
+        }
+
+        verbose = TRUTHY_PATTERN.test(`${verbose}`)
+
+        return {
+            verbose,
+            colors,
+            ...options,
+        }
+    }
+
+    static getStackFrames (error) {
         let _stackframes
 
-        if (this.stack) {
-            _stackframes = this.stack
+        if ((error instanceof Error) && typeof error.stack === 'string') {
+            _stackframes = error.stack
                 .split(/\n/)
                 .slice(1)
                 .filter((value) => {
@@ -183,7 +408,6 @@ class BaseError extends ExtendableError {
 
                         if (stackframeLine.includes('(')) {
                             stackframeData = stackframeLine.match(/^at ([^()]+)\((.+)(?::(\d+):(\d+)\))/i)
-
                         } else {
                             stackframeData = stackframeLine.match(/^at (.+)(?::(\d+):(\d+))/i)
                         }
@@ -214,178 +438,54 @@ class BaseError extends ExtendableError {
                 })
 
         } else {
-            _stackframes = null
+            _stackframes = []
         }
 
         return _stackframes
     }
 
-    get stackobjects () {
-        const _stackobjects = (this.stackframes || [])
-            .map((stackframe) => {
-                const file = stackframe.fileName
-                const function_ = stackframe.functionName
-                const line = stackframe.lineNumber
-                const column = stackframe.columnNumber
-                const source = stackframe.source
+    static getStackObjects (error) {
+        let _stackobjects
 
-                const stackobject = {
-                    file,
-                    function: function_,
-                    line,
-                    column,
-                    source,
-                }
+        if (error instanceof Error) {
+            error = BaseError.cast(error)
 
-                return stackobject
-            })
-            .filter((stackobject) => {
-                return !!stackobject.file
-            })
-            .filter((stackobject) => {
-                const isInternalStackFile = stackobject.file.includes(__filename)
-                const isInternalStackFunction = Object.getOwnPropertyNames(this).includes(stackobject.function)
-                const isInternalStackObject = isInternalStackFile && isInternalStackFunction
+            const _stackobjects = (error.stackframes || [])
+                .map((stackframe) => {
+                    const file = stackframe.fileName
+                    const function_ = stackframe.functionName
+                    const line = stackframe.lineNumber
+                    const column = stackframe.columnNumber
+                    const source = stackframe.source
 
-                return !isInternalStackObject
-            })
+                    const stackobject = {
+                        file,
+                        function: function_,
+                        line,
+                        column,
+                        source,
+                    }
+
+                    return stackobject
+                })
+                .filter((stackobject) => {
+                    return !!stackobject.file
+                })
+                .filter((stackobject) => {
+                    const isInternalStackFile = stackobject.file.includes(__filename)
+                    const isInternalStackFunction = Object.getOwnPropertyNames(error).includes(stackobject.function)
+                    const isInternalStackObject = isInternalStackFile && isInternalStackFunction
+
+                    return !isInternalStackObject
+                })
+
+            return _stackobjects
+        } else {
+            _stackobjects = []
+        }
 
         return _stackobjects
     }
-
-    get data () {
-        return {
-            'type': this.constructor.name,
-            'id': this.id,
-            'code': this.code,
-            'key': this.key,
-            'message': this.message,
-            'details': this.details,
-            'stack': this.stackobjects,
-        }
-    }
-
-    json (options = {}) {
-        let {
-            indent,
-        } = options || {}
-
-        if (!indent && indent !== false) {
-            indent = DEFAULT_ERROR_INDENT
-        }
-
-        return JSON.stringify(this.data, null, indent)
-    }
-
-    inspect (options = {}) {
-        options = options || {}
-
-        let {
-            colors,
-            verbose,
-        } = options
-
-        let message
-        let details
-
-        const indent = DEFAULT_ERROR_INDENT
-
-        if (!this.message) {
-            message = '<none>'
-
-        } else {
-            message = this.message.split(' - Arguments')[0]
-        }
-
-        if (colors) {
-            message = color.red(message)
-        }
-
-        if (verbose) {
-            const depth = null
-
-            details = inspect(this.details, {
-                colors,
-                indent,
-                depth,
-            })
-
-        } else {
-            details = null
-        }
-
-        const hasDetails = (typeof this.details === 'object') && !!Object.keys(this.details).length
-
-        message = [
-            message,
-            hasDetails && details,
-        ].filter(Boolean).join(' - ')
-
-        return message
-    }
-
-    toString () {
-        let colors
-        let verbose
-
-        colors = process.env['ERROR_COLORS']
-        colors = colors || process.env['COLORS']
-
-        if (typeof colors === 'undefined') {
-            colors = DEFAULT_ERROR_COLORS
-        }
-
-        colors = TRUTHY_PATTERN.test(`${colors}`)
-
-        verbose = process.env['ERROR_VERBOSE']
-        verbose = verbose || process.env['VERBOSE']
-
-        if (typeof verbose === 'undefined') {
-            verbose = DEFAULT_ERROR_VERBOSE
-        }
-
-        verbose = TRUTHY_PATTERN.test(`${verbose}`)
-
-        const string = this.inspect({
-            colors,
-            verbose,
-        })
-
-        return string
-    }
-
-    static cast (error) {
-        if (error instanceof BaseError) {
-            return error
-
-        } else {
-            const castedError = new BaseError(error)
-
-            castedError.stack = error.stack
-
-            return castedError
-        }
-    }
-
-    static from (error) {
-        return this.cast(error)
-    }
-
-    static object (error, attrs) {
-        const extendedError = BaseError.cast(error)
-
-        return {
-            type: error.constructor.name,
-            id: extendedError.id,
-            code: extendedError.code,
-            key: extendedError.key,
-            message: extendedError.message,
-            details: extendedError.details,
-            stack: extendedError.stackobjects,
-            ...attrs,
-        }
-    }
-
 }
 
 /* =========================================

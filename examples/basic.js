@@ -49,6 +49,7 @@ const range = (to) => {
 
 let amount = ''
 
+// eslint-disable-next-line
 for (let dollar of range(42)) {
     amount += '$'
 
@@ -56,35 +57,63 @@ for (let dollar of range(42)) {
         printMoney(amount)
 
     } catch (error) {
+        process.env.ERROR_VERBOSE = false
+        process.env.ERROR_COLORS = false
+
         console.log()
-        console.log('===============================')
+        console.log('========================================================')
         console.log('     error.toString()')
-        console.log('---------------------------')
+        console.log('-----------------------------------------------------')
         console.log()
         console.log(error.toString())
         console.log()
 
         console.log()
-        console.log('===============================')
-        console.log('     error.stack')
-        console.log('---------------------------')
+        console.log('========================================================')
+        console.log('     error.toString({verbose: false})')
+        console.log('-----------------------------------------------------')
         console.log()
-        console.log(error.stack)
+        console.log(error.toString({verbose: false}))
         console.log()
 
         console.log()
-        console.log('===============================')
-        console.log('     error.inspect()')
-        console.log('---------------------------')
+        console.log('========================================================')
+        console.log('     error.toString({verbose: true})')
+        console.log('-----------------------------------------------------')
         console.log()
-        console.log(error.inspect(colors = true, verbose = true))
+        console.log(error.toString({verbose: true}))
+        console.log()
 
         console.log()
-        console.log('===============================')
-        console.log('     error.json()')
-        console.log('---------------------------')
+        console.log('========================================================')
+        console.log('     error.toString({colors: false})')
+        console.log('-----------------------------------------------------')
         console.log()
-        console.log(error.json())
+        console.log(error.toString({colors: false}))
+        console.log()
+
+        console.log()
+        console.log('========================================================')
+        console.log('     error.toString({colors: true})')
+        console.log('-----------------------------------------------------')
+        console.log()
+        console.log(error.toString({colors: true}))
+        console.log()
+
+        console.log()
+        console.log('========================================================')
+        console.log('     error.toString({verbose: true, colors: true})')
+        console.log('-----------------------------------------------------')
+        console.log()
+        console.log(error.toString({verbose: true, colors: true}))
+        console.log()
+
+        console.log()
+        console.log('========================================================')
+        console.log('     error.toJSON()')
+        console.log('-----------------------------------------------------')
+        console.log()
+        console.log(error.toJSON())
         console.log()
 
         break
