@@ -31,7 +31,7 @@
         "test-ci": "npx jest --runInBand --forceExit --detectOpenHandles --coverage",
         "test-dev": "npx jest --watch",
         "validate": "npx eslint \"**/*.js\"",
-        "release": "npx np --no-publish",
+        "release": "npx np",
         "coverage": "npx codecov"
     },
     "engines": {
