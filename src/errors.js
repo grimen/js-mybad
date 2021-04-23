@@ -412,6 +412,14 @@ class BaseError extends ExtendableError {
                             stackframeData = stackframeLine.match(/^at (.+)(?::(\d+):(\d+))/i)
                         }
 
+                        if (stackframeData?.length === 4) {
+                            stackframeData = [
+                                ...stackframeData.slice(0, 2),
+                                null,
+                                ...stackframeData.slice(2, 4),
+                            ]
+                        }
+
                         let [
                             // eslint-disable-next-line
                             _,
@@ -468,11 +476,11 @@ class BaseError extends ExtendableError {
 
                     return stackobject
                 })
+                // .filter((stackobject) => {
+                //     return !!stackobject.file
+                // })
                 .filter((stackobject) => {
-                    return !!stackobject.file
-                })
-                .filter((stackobject) => {
-                    const isInternalStackFile = stackobject.file.includes(__filename)
+                    const isInternalStackFile = stackobject.file?.includes(__filename)
                     const isInternalStackFunction = Object.getOwnPropertyNames(error).includes(stackobject.function)
                     const isInternalStackObject = isInternalStackFile && isInternalStackFunction
 
