@@ -429,6 +429,11 @@ class BaseError extends ExtendableError {
                             columnNumber,
                         ] = stackframeData || []
 
+                        if (functionName.includes('/')) {
+                            fileName = functionName
+                            functionName = null
+                        }
+
                         functionName = functionName && functionName.trim()
                         lineNumber = lineNumber && parseInt(lineNumber)
                         columnNumber = columnNumber && parseInt(columnNumber)
@@ -465,6 +470,7 @@ class BaseError extends ExtendableError {
                     const line = stackframe.lineNumber
                     const column = stackframe.columnNumber
                     const source = stackframe.source
+                    const uri = file && `file://${file}:${line}:${column}`
 
                     const stackobject = {
                         file,
@@ -472,6 +478,7 @@ class BaseError extends ExtendableError {
                         line,
                         column,
                         source,
+                        uri,
                     }
 
                     return stackobject
